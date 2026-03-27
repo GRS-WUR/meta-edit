@@ -15,7 +15,7 @@
         "serve": "vue-cli-service serve",
         "build": "vue-cli-service build",
         "lint": "vue-cli-service lint",
-        "deploy": "gh-pages -d dist"
+        "deploy": "gh-pages -d dist -b gh-pages -f"
     },
     "dependencies": {
         "@koumoul/vjsf": "^2.23.3",

@@ -22,23 +22,19 @@
             "properties": {
                 "identifier": {
                     "type": "string",
-                    "description": "TBD - <First name>.<Last name>; student ID no.; etc."
+                    "description": "enter a unique identifier that will used for the filename; e.g., a project name and data type; students should use a student ID given by the data steward; if multiple records are generated with the same identifier, then a number will be appended to the end"
                 },
                 "language": {
                     "type": "string",
-                    "description": "primary language used for documenting metadata, the metadata records themselves can be provided in multiple languages"
-                },
-                "charset": {
-                    "type": "string",
-                    "description": "full name of the character coding standard used for the metadata set"
+                    "description": "primary language used for documenting metadata, the data themselves may be in multiple other languages"
                 },
                 "parentidentifier": {
                     "type": "string",
-                    "description": "file identifier of the metadata to which this metadata is a subset"
+                    "description": "optional - file identifier of the metadata to which this metadata is a subset; for students, a supervisor identifier (last name)"
                 },
                 "hierarchylevel": {
                     "type": "string",
-                    "description": "level to which the metadata applies",
+                    "description": "level to which the metadata applies (select most appropriate",
                     "enum": [
                         "series",
                         "software",
@@ -74,7 +70,7 @@
             "properties": {
                 "title": {
                     "type": "string",
-                    "description": "name by which the cited resource is known"
+                    "description": "name by which the resource is known; e.g., project or thesis title"
                 },
                 "abstract": {
                     "type": "string",
@@ -86,11 +82,11 @@
                 },
                 "edition": {
                     "type": "string",
-                    "description": "version of the resource (optional)"
+                    "description": "optional - version of the resource"
                 },
                 "accessconstraints": {
                     "type": "string",
-                    "description": "access constraints applied to assure the protection of privacy or intellectual property, and any special\nrestrictions or limitations on obtaining the resource or metadata. If there are no access constraints, use the term 'otherRestrictions'",
+                    "description": "access constraints applied to assure the protection of privacy or intellectual property, and any special restrictions or limitations on obtaining the resource or metadata; if there are none, use the term 'otherRestrictions'",
                     "enum": [
                         "patent",
                         "otherRestrictions",
@@ -108,7 +104,7 @@
                 },
                 "language": {
                     "type": "string",
-                    "description": "language(s) used within the dataset (optional)"
+                    "description": "optional - language(s) used within the dataset"
                 },
                 "status": {
                     "description": "the status of the resource(s)",
@@ -143,7 +139,7 @@
                 },
                 "browsegraphic": {
                     "type": "string",
-                    "description": "graphic that provides an illustration of the dataset"
+                    "description": "optional - link to a visualisation (thumbnail image) of the dataset"
                 },
                 "dates": {
                     "type": "object",
@@ -174,7 +170,7 @@
                                 "properties": {
                                     "bbox": {
                                         "type": "array",
-                                        "description": "geographic position of the dataset, formatted as a list of [minx,miny,maxx,maxy]",
+                                        "description": "geographic extent of the dataset, formatted as a list of [minx,miny,maxx,maxy]; coordinates may be entered one at a time followed by the [Tab] key; default values are for the Netherlands",
                                         "items": {
                                             "type": "number"
                                         },
@@ -192,7 +188,7 @@
                         },
                         "temporal": {
                             "type": "array",                                
-                            "description": "temporal extents",
+                            "description": "optional - temporal extents",
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -266,12 +262,12 @@
                         "properties": {
                             "organization": {
                                 "type": "string",
-                                "description": "name of the responsible organization"
+                                "description": "name of the responsible organization; GRS unless otherwise specified"
                             },
                             "url": {
                                 "type": "string",
                                 "format": "uri",
-                                "description": "online information that can be used to contact the individual or organization"
+                                "description": "optional - online information that can be used to contact the individual or organization"
                             },
                             "individualname": {
                                 "type": "string",
@@ -368,11 +364,11 @@
                             },
                             "name": {
                                 "type": "string",
-                                "description": "name of the online resource"
+                                "description": "name of the online resource; e.g., Zenodo, 4TU, NAS, etc."
                             },
                             "description": {
                                 "type": "string",
-                                "description": "detailed text description of what the online resources is/does"
+                                "description": "detailed text description of the online resources"
                             },
                             "function": {
                                 "type": "string",
