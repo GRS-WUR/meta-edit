@@ -22,7 +22,7 @@
             "properties": {
                 "identifier": {
                     "type": "string",
-                    "description": "enter a unique identifier that will used for the filename; e.g., a project name and data type; students should use a student ID given by the data steward; if multiple records are generated with the same identifier, then a number will be appended to the end"
+                    "description": "enter a unique identifier that will be used for the filename; e.g., a project name and data type; students should use a student ID given by the data steward; if multiple records are generated with the same identifier, then a number will be appended to the end"
                 },
                 "language": {
                     "type": "string",
