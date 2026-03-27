@@ -1,0 +1,56 @@
+{
+    "mcf": {
+        "version": "1.0"
+    },
+    "metadata": {
+        "hierarchylevel": "dataset",
+        "identifier": "",
+        "language": "en",
+        "charset": "utf8",
+        "parentidentifier": "",
+        "datestamp": "$date$"
+    },
+    "spatial": {
+    },
+    "distribution": [
+        {
+            "url": "",
+            "type": "",
+            "name": "",
+            "description": "",
+            "function": ""
+        }
+    ],
+    "contact": [
+        {
+            "organization": "",
+            "url": "",
+            "individualname": "",
+            "positionname": "",
+            "country": "",
+            "email": ""
+        }
+    ],
+    "identification": {
+        "identifier": "",
+        "title": "",
+        "abstract": "",
+        "dates": {
+            "creation": "",
+            "publication": "",
+            "revision": ""
+        },
+        "edition": "",
+        "extents": {
+                "spatial": [{"bbox":[3,50.5,7.5,54],"crs":4326}],
+                "temporal": [{"begin":"","end":""}]
+            },
+        "modDate": "",
+        "keywords": [],
+        "language": "en",
+        "status": "completed",
+        "maintenancefrequency": "irregular",
+        "accessconstraints": "license",
+        "rights": "CC-BY 4.0"
+    }
+}

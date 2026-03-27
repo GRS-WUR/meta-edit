@@ -1,0 +1,23 @@
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+
+module.exports = {
+    publicPath: "/meta-edit/",
+    transpileDependencies: [
+        'vuetify',
+        '@koumoul/vjsf'
+    ],
+    pluginOptions: {
+        i18n: {
+            locale: "en",
+            fallbackLocale: "fr",
+            localeDir: "locales",
+            enableInSFC: true,
+            includeLocales: false,
+            enableBridge: true
+        }
+    },
+
+    configureWebpack: {
+        plugins: [new NodePolyfillPlugin()]
+    }
+}

@@ -1,0 +1,514 @@
+{
+    "type": "object",
+    "x-display": "vertical-stepper",
+    "properties": {
+        "mcf": {
+            "type": "object",
+            "x-display": "hidden",
+            "properties": {
+                "version": {
+                    "type": "number",
+                    "description": "version of MCF format",
+                    "const": 1
+                }
+            },
+            "required": [
+                "version"
+            ]
+        },
+        "metadata": {
+            "type": "object",
+            "title": "Metadata",
+            "properties": {
+                "identifier": {
+                    "type": "string",
+                    "description": "TBD - <First name>.<Last name>; student ID no.; etc."
+                },
+                "language": {
+                    "type": "string",
+                    "description": "primary language used for documenting metadata, the metadata records themselves can be provided in multiple languages"
+                },
+                "charset": {
+                    "type": "string",
+                    "description": "full name of the character coding standard used for the metadata set"
+                },
+                "parentidentifier": {
+                    "type": "string",
+                    "description": "file identifier of the metadata to which this metadata is a subset"
+                },
+                "hierarchylevel": {
+                    "type": "string",
+                    "description": "level to which the metadata applies",
+                    "enum": [
+                        "series",
+                        "software",
+                        "featureType",
+                        "model",
+                        "collectionHardware",
+                        "collectionSession",
+                        "nonGeographicDataset",
+                        "propertyType",
+                        "fieldSession",
+                        "dataset",
+                        "service",
+                        "attribute",
+                        "attributeType",
+                        "tile",
+                        "feature",
+                        "dimensionGroup"
+                    ]
+                },
+                "datestamp": {
+                    "format": "date",
+                    "description": "date that the metadata was created, pygeometa supports specifying the `$date$` or `$datetime$` variable to update the date value at run time"
+                }
+            },
+            "required": [
+                "identifier",
+                "hierarchylevel"
+            ]
+        },
+        "identification": {
+            "type": "object",
+            "title": "Identification",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "name by which the cited resource is known"
+                },
+                "abstract": {
+                    "type": "string",
+                    "description": "brief narrative summary of the content of the resource(s)"
+                },
+                "keywords": {
+                    "type": "array",
+                    "description": "a few keywords regarding the main theme(s) of the dataset, project, thesis, etc."
+                },
+                "edition": {
+                    "type": "string",
+                    "description": "version of the resource (optional)"
+                },
+                "accessconstraints": {
+                    "type": "string",
+                    "description": "access constraints applied to assure the protection of privacy or intellectual property, and any special\nrestrictions or limitations on obtaining the resource or metadata. If there are no access constraints, use the term 'otherRestrictions'",
+                    "enum": [
+                        "patent",
+                        "otherRestrictions",
+                        "copyright",
+                        "trademark",
+                        "patentPending",
+                        "restricted",
+                        "license",
+                        "intellectualPropertyRights"
+                    ]
+                },
+                "license": {
+                    "type": "string",
+                    "description": "name of license applied to the dataset (e.g., CC-BY 4.0)"
+                },
+                "language": {
+                    "type": "string",
+                    "description": "language(s) used within the dataset (optional)"
+                },
+                "status": {
+                    "description": "the status of the resource(s)",
+                    "type": "string",
+                    "enum": [
+                        "planned",
+                        "historicalArchive",
+                        "completed",
+                        "onGoing",
+                        "underDevelopment",
+                        "required",
+                        "obsolete"
+                    ]
+                },
+                "maintenancefrequency": {
+                    "description": "frequency with which modifications and deletions are made to the data after it is first produced",
+                    "type": "string",
+                    "enum": [
+                        "continual",
+                        "daily",
+                        "weekly",
+                        "fortnightly",
+                        "monthly",
+                        "quarterly",
+                        "biannually",
+                        "annually",
+                        "asNeeded",
+                        "irregular",
+                        "notPlanned",
+                        "unknown"
+                    ]
+                },
+                "browsegraphic": {
+                    "type": "string",
+                    "description": "graphic that provides an illustration of the dataset"
+                },
+                "dates": {
+                    "type": "object",
+                    "properties": {
+                        "creation": {
+                            "format": "date",
+                            "type": "string"
+                        },
+                        "publication": {
+                            "format": "date",
+                            "type": "string"
+                        },
+                        "revision": {
+                            "format": "date",
+                            "type": "string"
+                        }
+                    }
+                },
+                "extents": {
+                    "type": "object",
+                    "description": "Coverage of the data in time and space",
+                    "properties": {
+                        "spatial": {
+                            "type": "array",
+                            "description": "spatial extents",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "bbox": {
+                                        "type": "array",
+                                        "description": "geographic position of the dataset, formatted as a list of [minx,miny,maxx,maxy]",
+                                        "items": {
+                                            "type": "number"
+                                        },
+                                        "minItems": 4,
+                                        "maxItems": 6
+                                    },
+                                    "crs": {
+                                        "type": "integer",
+                                        "description": "EPSG code identifier",
+                                        "default": 4326
+                                    }
+                                },
+                                "required": []
+                            }
+                        },
+                        "temporal": {
+                            "type": "array",                                
+                            "description": "temporal extents",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "begin": {
+                                        "type": [
+                                            "string"
+                                        ],
+                                        "format": "date",
+                                        "nullable": true
+                                    },
+                                    "end": {
+                                        "type": [
+                                            "string"
+                                        ],
+                                        "format": "date",
+                                        "nullable": true
+                                    },
+                                    "resolution": {
+                                        "type": "string",
+                                        "description": "minimum time period resolvable in the dataset, as an ISO 8601 duration, e.g., 'P1D'"
+                                    }
+                                },
+                                "required": []
+                            }
+                        }
+                    }
+                }
+            },
+            "required": [
+                "title"
+            ]
+        },
+        "spatial": {
+            "type": "object",
+            "title": "Spatial information",
+            "properties": {
+                "datatype": {
+                    "type": "string",
+                    "description": "method used to represent geographic information in the dataset",
+                    "enum": [
+                        "vector",
+                        "grid",
+                        "textTable",
+                        "tin",
+                        "stereoModel",
+                        "video"
+                    ]
+                },
+                "geomtype": {
+                    "type": "string",
+                    "description": "name of point or vector objects used to locate zero-, one-, two-, or three dimensional spatial locations in the dataset",
+                    "enum": [
+                        "complex",
+                        "composite",
+                        "curve",
+                        "point",
+                        "solid",
+                        "surface"
+                    ]
+                }
+            }
+        },
+        "contact": {
+            "title": "Contact information",
+            "type": "object",
+            "properties": {
+                "contacts": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "organization": {
+                                "type": "string",
+                                "description": "name of the responsible organization"
+                            },
+                            "url": {
+                                "type": "string",
+                                "format": "uri",
+                                "description": "online information that can be used to contact the individual or organization"
+                            },
+                            "individualname": {
+                                "type": "string",
+                                "description": "name of the responsible person"
+                            },
+                            "positionname": {
+                                "type": "string",
+                                "description": "position of the responsible person"
+                            },
+                            "phone": {
+                                "type": "string",
+                                "description": "telephone number by which individuals can speak to the responsible organization or individual"
+                            },
+                            "address": {
+                                "type": "string",
+                                "description": "address line for the location (as described in ISO 11180)"
+                            },
+                            "city": {
+                                "type": "string",
+                                "description": "city of the organization"
+                            },
+                            "administrativearea": {
+                                "type": "string",
+                                "description": "state, province where the organization is located"
+                            },
+                            "postalcode": {
+                                "type": "string",
+                                "description": "ZIP or other postal code"
+                            },
+                            "country": {
+                                "type": "string",
+                                "description": "country where the organization is located"
+                            },
+                            "email": {
+                                "type": "string",
+                                "description": "email address of the responsible individual or organization"
+                            },
+                            "contactinstructions": {
+                                "type": "string",
+                                "description": "supplemental instructions on how or when to contact the individual or organization"
+                            }
+                        },
+                        "required": [
+                            "organization",
+                            "email"
+                        ]
+                    }
+                }
+            }
+        },
+        "distribution": {
+            "title": "Distribution information",
+            "type": "object",
+            "properties": {
+                "distributions": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "url": {
+                                "type": "string",
+                                "format": "uri",
+                                "description": "location (URL address) for online access"
+                            },
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "FILE:GEO",
+                                    "FILE:RASTER",
+                                    "IETF:GeoJSON",
+                                    "OGC:CSW",
+                                    "OGC:GPKG",
+                                    "OGC:OPS",
+                                    "OGC:SOS",
+                                    "OGC:WCS",
+                                    "OGC:WFS",
+                                    "OGC:WMS",
+                                    "OGC:WMTS",
+                                    "OGC:WPS",
+                                    "OGCCov",
+                                    "OGCDGGS",
+                                    "OGCEDR",
+                                    "OGCFeat",
+                                    "OGCMaps",
+                                    "OGCProc",
+                                    "OGCRec",
+                                    "OGCRout",
+                                    "OGCTile",
+                                    "OSGEO:TMS",
+                                    "OSM:XYZ",
+                                    "WWW:LINK"
+                                ],
+                                "description": "connection protocol to be used. Must be one of the `identifier` values from https://github.com/OSGeo/Cat-Interop/blob/master/LinkPropertyLookupTable.csv"
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "name of the online resource"
+                            },
+                            "description": {
+                                "type": "string",
+                                "description": "detailed text description of what the online resources is/does"
+                            },
+                            "function": {
+                                "type": "string",
+                                "description": "code for function performed by the online resource",
+                                "enum": [
+                                    "download",
+                                    "information",
+                                    "offlineAccess",
+                                    "order",
+                                    "search"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "url"
+                        ]
+                    }
+                }
+            }
+        },
+        "acquisition": {
+            "type": "object",
+            "title": "Acquisition",
+            "properties": {
+                "platforms": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "identifier": {
+                                "type": "string",
+                                "description": "unique identification of the platform"
+                            },
+                            "description": {
+                                "type": "string",
+                                "description": "platform description"
+                            },
+                            "instruments": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "identifier": {
+                                            "type": "string",
+                                            "description": "instrument identifier"
+                                        },
+                                        "type": {
+                                            "type": "string",
+                                            "description": "instrument type"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "required": [
+                            "identifier",
+                            "description",
+                            "instruments"
+                        ]
+                    }
+                }
+            },
+            "required": [
+                "platforms"
+            ]
+        }
+    },
+    "required": [
+        "mcf",
+        "metadata",
+        "identification",
+        "contact"
+    ],
+    "definitions": {
+        "any_type": {
+            "type": [
+                "string",
+                "number",
+                "integer",
+                "object",
+                "array",
+                "boolean"
+            ]
+        },
+        "i18n_array": {
+            "oneOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "object",
+                    "patternProperties": {
+                        ".*_\\w{2}$": {
+                            "allOf": [
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "i18n_string": {
+            "oneOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "object",
+                    "patternProperties": {
+                        ".*_\\w{2}$": {
+                            "allOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "date_or_datetime_string": {
+            "anyOf": [
+                {
+                    "type": "string",
+                    "format": "date"
+                },
+                {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            ]
+        }
+    }
+}
