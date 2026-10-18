@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-app-bar :elevation="0">
-      <a href="https://github.com/osgeo/mdme">
+      <a href="https://github.com/GRS-WUR/meta-edit">
         <v-img class="mx-5" v-bind:src="require('./img/logo.jpg')" max-height="80" max-width="120" contain></v-img></a>
       <v-btn id="mnu" color="primary" class="me-2">
         File &nbsp; &#9660;
@@ -29,7 +29,7 @@
 
       <v-btn class="me-auto" @click="saveFile">Save</v-btn>
 
-      <a href="https://github.com/osgeo/mdme" class="text-decoration-none" target="_blank">
+      <a href="https://github.com/GRS-WUR/meta-edit#readme" class="text-decoration-none" target="_blank">
         <v-btn>Documentation</v-btn></a>
     </v-app-bar>
 
@@ -136,7 +136,7 @@ import FileReader from "./FileReader";
 //import $RefParser from "@apidevtools/json-schema-ref-parser";
 //import mergeAllOf from "json-schema-merge-allof";
 import { parse } from "yaml";
-import { dict2array } from "@/scripts/helpers.js";
+import { mcfToForm } from "@/scripts/helpers.js";
 
 var parseString = require("xml2js").parseString;
 
@@ -150,7 +150,8 @@ export default {
       try {
         fetch(decodeURI(searchParams.get('mcf')))
           .then(r => r.text()) 
-          .then(body => self.$emit("updateModel", this.loadMCF(parse(body))))
+          .then(body => self.$emit("updateModel", this.loadMCF(parse(body)), true))
+          .catch(e => alert("Could not load " + searchParams.get('mcf') + ": " + e.message))
       } catch (error) {
         console.error(error);
       }
@@ -264,19 +265,18 @@ export default {
     },
     MCFOpen() {
       let self = this;
-      var model = this.loadMCF(parse(this.data));
-      self.$emit("updateModel", model);
+      try {
+        var model = this.loadMCF(parse(this.data));
+        self.$emit("updateModel", model, true);
+      } catch (e) {
+        alert("Could not read this file as MCF (YAML): " + e.message);
+        return;
+      }
       this.filedialog = false;
     },
     loadMCF(model) {
-      //convert contacts and distributions to arrays
-      model.contact = { contacts: dict2array(model["contact"],"role") };
-      if (!model.identification) model.identification = {};
-      model.identification.keywords = dict2array(model.identification.keywords);
-      model.distribution = { distributions: dict2array(model["distribution"],"type") };
-      //todo: verify if this is valid mcf, you could merge the json with a default json
-      //if (this.data.mcf && this.data.mcf.version && this.data.mcf.version == "1.0"){}
-      return model;
+      // contacts, distributions and keyword groups become lists for the form
+      return mcfToForm(model);
     },
     fetchDOI() {
       let doi = this.record;
@@ -310,10 +310,10 @@ export default {
             try {
               let cnt = [];
               doiMD.author.split(" and ").forEach(function (c) {
-                cnt.push({ name: c, role: "author" });
+                cnt.push({ individualname: c, role: cnt.length ? "author" : "originator" });
               });
               if (doiMD.publisher) {
-                cnt.push({ organisation: doiMD.publisher, role: "publisher" });
+                cnt.push({ organization: doiMD.publisher, role: "publisher" });
               }
               mdl.contact = { contacts: cnt };
             } catch (e) {
@@ -327,7 +327,8 @@ export default {
             }
             try {
               if (doiMD.year) {
-                mdl.identification.modDate =
+                mdl.identification.dates = {};
+                mdl.identification.dates.publication =
                   doiMD.year.toString() +
                   "-" +
                   (doiMD.month
@@ -346,16 +347,20 @@ export default {
                       "dec",
                     ].findIndex((m) => m === doiMD.month) + 1
                     : 1
-                  ).toString() +
-                  "-1";
+                  ).toString().padStart(2, "0") +
+                  "-01";
               }
             } catch (e) {
               console.log(e);
             }
             if (doiMD.keywords) {
-              mdl.identification.keywords = doiMD.keywords.split(",");
+              mdl.identification.keywords = [{
+                keywords: doiMD.keywords.split(",").map((k) => k.trim()).filter(Boolean),
+                keywords_type: "theme",
+              }];
             }
-            mdl.identification.id = doi.split("doi.org/")[1];
+            mdl.metadata = { parentidentifier: "DOI:" + doi.split("doi.org/")[1] };
+            mdl.identification.url = doi;
             self.$emit("updateModel", mdl);
             alert("Doi " + doi + " imported!");
           })
@@ -375,33 +380,36 @@ export default {
           try {
             mdl.identification.abstract = myLayer.abstract;
             layerName = myLayer.name;
-            mdl.identification.keywords = [];
+            let words = [];
             myLayer.keywordlist.Keyword.forEach(function (kw) {
-              if (kw != "") mdl.identification.keywords.push(kw);
+              if (kw != "") words.push(kw);
             });
+            mdl.identification.keywords = [{ keywords: words, keywords_type: "theme" }];
           } catch (e) {
             console.log(e);
           }
           try {
             let bb = myLayer.ex_geographicboundingbox;
-            mdl.identification.geographicalextent =
-              bb.westBoundLongitude.toString() +
-              "," +
-              +bb.southBoundLatitude +
-              "," +
-              bb.eastBoundLongitude +
-              "," +
-              bb.northBoundLatitude;
+            mdl.identification.extents = {
+              spatial: [{
+                bbox: [
+                  Number(bb.westBoundLongitude),
+                  Number(bb.southBoundLatitude),
+                  Number(bb.eastBoundLongitude),
+                  Number(bb.northBoundLatitude),
+                ],
+                crs: 4326,
+              }],
+            };
           } catch (e) {
             console.log(e);
           }
         }
       });
       if (self.WMSCaps) {
-        mdl.identification.id =
-          self.WMSCaps.href.split("?")[0] + "#" + layerName;
+        mdl.identification.url = self.WMSCaps.href.split("?")[0];
         mdl.distribution.distributions = [
-          { url: self.WMSCaps.href, name: layerName, protocol: "OGC:WMS" },
+          { url: self.WMSCaps.href.split("?")[0], name: layerName, type: "OGC:WMS", function: "information", description: "" },
         ];
         try {
           let c = self.WMSCaps.contact;
@@ -409,8 +417,8 @@ export default {
             {
               email: c.ContactElectronicMailAddress[0],
               role: "publisher",
-              name: c.ContactPersonPrimary[0].ContactPerson[0],
-              organisation: c.ContactPersonPrimary[0].ContactOrganization[0],
+              individualname: c.ContactPersonPrimary[0].ContactPerson[0],
+              organization: c.ContactPersonPrimary[0].ContactOrganization[0],
             },
           ];
         } catch (e) {

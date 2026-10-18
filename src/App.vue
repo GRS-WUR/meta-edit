@@ -21,67 +21,66 @@ import '@koumoul/vjsf/lib/VJsf.css'
 import '@koumoul/vjsf/lib/deps/third-party.js'
 import MainMenu from './components/MainMenu.vue'
 import { stringify } from "yaml";
-import { array2dict } from "@/scripts/helpers.js";
+import { formToMcf, newRecord, MCF_SECTIONS } from "@/scripts/helpers.js";
 import "@/scripts/helpers.css";
 
-const vocab = "mcf"; //ogcapi-record
+// Which metadata model the form uses: "mcf" (default), "ogcapi-record" or "datapackage".
+// The load/save conversions in helpers.js are written for MCF.
+const vocab = "mcf";
 
-//import model
-let mdl = require('./models/'+vocab+'/model.json');
-//import template
+const mdl = require('./models/'+vocab+'/model.json');
 const tpl = require('./models/'+vocab+'/template.json');
-
-const opts = {}
 
 export default {
   name: 'App',
-  components: { 
+  components: {
     'MainMenu': MainMenu,
-    'VJsf': VJsf 
+    'VJsf': VJsf
   },
-  opts,
   data: () => ({
     valid: false,
-    model: Object.assign({}, tpl),
-    opts,
+    model: newRecord(tpl),
     schema: mdl
   }),
   methods: {
-    reset () {
-      this.model = {};
-    },
-    download (data,mode) {
-      const blob = new Blob([data], {type: 'text/plain'})
-      const e = document.createEvent('MouseEvents'),
-      a = document.createElement('a');
-      a.download = this.model.metadata.identifier + "." + mode;
+    download (data, ext) {
+      const blob = new Blob([data], {type: 'text/plain;charset=utf-8'});
+      const a = document.createElement('a');
+      const id = (this.model.metadata && this.model.metadata.identifier) || 'metadata';
+      a.download = id + "." + ext;
       a.href = window.URL.createObjectURL(blob);
-      a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
-      e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-      a.dispatchEvent(e);
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => window.URL.revokeObjectURL(a.href), 1000);
     },
-    setModel (mdl) {
-      //copy key-values from object 2 levels deep
-      let self = this;
-      //self.model = mdl;
-      ["metadata","spatial","identification","distribution","contact","acquisition","dataquality","content_info"].forEach(function(m){
-        if (mdl[m]){
-          if (!self.model[m]) self.model[m] = {};
-          Object.keys(mdl[m]).forEach(function(k){self.model[m][k] = mdl[m][k]});
+    setModel (mdl, replace) {
+      // File > New: start again from the template
+      if (!mdl || Object.keys(mdl).length === 0) {
+        this.model = newRecord(tpl);
+        return;
+      }
+      // File > Open: show exactly what is in the file
+      if (replace) {
+        this.model = mdl;
+        return;
+      }
+      // Imported content: merge it into the current record,
+      // section by section, so imports only overwrite what they provide
+      const merged = Object.assign({}, this.model);
+      MCF_SECTIONS.forEach(function (s) {
+        if (mdl[s]) {
+          merged[s] = Object.assign({}, merged[s] || {}, mdl[s]);
         }
-      })
+      });
+      this.model = merged;
     },
     saveData(mode) {
       let self = this;
       if (!mode){
         mode = 'mcf';
       }
-      let toExp = Object.assign({}, this.model);
-      //convert contact/dist to objects
-      toExp.contact = array2dict(toExp.contact.contacts,"role");
-      toExp.distribution = array2dict(toExp.distribution.distributions);
-      if (!toExp.identification) toExp.identification = {};
-      toExp.identification.keywords = array2dict(toExp.identification.keywords);
+      const toExp = formToMcf(this.model);
       if (mode=='mcf'){
         self.download(stringify(toExp), 'yml');
       } else {

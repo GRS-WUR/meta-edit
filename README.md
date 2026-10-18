@@ -1,64 +1,132 @@
+![meta-edit](./src/components/img/logo.svg)
 
-![MDME](./src/components/img/logo.svg)
+# meta-edit
 
-A web based (Node/Vue.js) application to populate YAML/JSON oriented [metadata records](https://en.wikipedia.org/wiki/Geospatial_metadata). The editor supports multiple metadata models (and models can be extended), currently supported are:
-- [MCF](https://geopython.github.io/pygeometa/reference/mcf/) 
-- [OGC API - Records](https://ogcapi.ogc.org/records/) 
-- [Data Package](https://specs.frictionlessdata.io/data-package/)
+A web form for creating metadata records for geospatial datasets, used by the
+[Laboratory of Geo-Information Science and Remote Sensing (GRS)](https://www.wur.nl/nl/leerstoelgroepen/laboratorium-voor-geo-informatiekunde-en-remote-sensing)
+at Wageningen University & Research.
 
-The app is currently in BETA, improvement suggestions very welcomed.
+**Open the form: <https://grs-wur.github.io/meta-edit/>**
 
-Deployment of latest version can be found at [GitHub.io](https://osgeo.github.io/mdme).
+You fill in the form and save the result as a
+[Metadata Control File](https://geopython.github.io/pygeometa/reference/mcf/) (MCF 2.0),
+a readable YAML file that sits next to your data and can be converted to ISO 19139,
+OGC API - Records, STAC or DCAT.
 
-## Capabilities 
+- **Filling in the form?** Read the [form guide](docs/form-guide.md).
+- **Maintaining the app?** Read on.
 
-- Open local metadata (MCF)
-- Import metadata from:
-  - DOI (extract DOI metadata as DataCite)
-  - WMS (extract metadata from Capabilities)
-  - iso19139 (via metadata conversion service provided by [pygeoapi.io](https://demo.pygeoapi.io/master)
-- Export metadata (via metadata conversion service)
-  - iso19139
-  - OGCAPI-Records
-  - Spatio Temporal Asset Catalog (STAC)
-  - DCAT
-- edit metadata
-- save metadata 
+meta-edit is based on [MDME](https://github.com/osgeo/mdme) by Paul van Genuchten.
 
-Note that the application runs client side only. No content is send to a server. Although the client can easily be extended to store the output in a Git repository or a catalogue system, like [pygeoapi](https://pygeoapi.io), [pycsw](https://pycsw.org), [Geonetwork opensource](https://geonetwork-opensource.org) or [CKAN](https://ckan.org).
+## What it does
 
-Exceptions are import and export metadata, which use a metadata transformation service provided by [demo.pygeoapi.io](https://demo.pygeoapi.io/master).
+- Create a new record from a template with GRS defaults (File → New)
+- Open an existing MCF file to edit it (File → Open); MCF 1.0 files are upgraded to 2.0
+- Import from a DOI, an ISO 19139 record or a WMS service (File → Import / Import from WMS)
+- Save as MCF YAML (Save)
+- Export to ISO 19139, OGC API - Records, STAC or DCAT (File → Export)
+- Load a record from a URL by opening `https://grs-wur.github.io/meta-edit/?mcf=<url-of-yml>`
 
-## About MCF
+The app runs entirely in the browser; nothing you type is stored on a server.
+The exceptions are **Import** and **Export**, which send the record to the
+pygeometa conversion service at [demo.pygeoapi.io](https://demo.pygeoapi.io/master/processes),
+a public demo server run by the pygeoapi project.
 
-Metadata is saved in the [Metadata Control File](https://geopython.github.io/pygeometa/reference/mcf/) (MCF) format. The format is encoded as YAML, which is a readable file format and optimal for content versioning in a Git repository. When alternate formats are needed (iso19115, DCAT, STAC), you can export to these formats using a transformation service provided by [the pygeoapi demo server](https://demo.pygeoapi.io/master/processes/pygeometa-metadata-generate) based on [pygeometa](https://geopython.github.io/). 
+## Run it locally
 
-## Installation
-
-Requires: 
-- Node.js
-- Yarn
+Requires [Node.js](https://nodejs.org) 18 or newer (20 recommended) and [Yarn](https://classic.yarnpkg.com) 1.x.
 
 ```bash
-git clone https://github.com/osgeo/mdme.git
+git clone https://github.com/GRS-WUR/meta-edit.git
+cd meta-edit
 yarn install
 yarn serve
 ```
 
-Visit [localhost:8000](http://localhost:8080).
+Then open the URL printed in the terminal, usually <http://localhost:8080/meta-edit/>.
 
-## Configuration
+`yarn build` writes a production build to `dist/`.
 
-Configure `vocab` in `app.vue` on which schema to use, [MCF](https://geopython.github.io/pygeometa/reference/mcf/), [OGC API - Records](https://ogcapi.ogc.org/records/) or [Data Package](https://specs.frictionlessdata.io/data-package/).
+## Deployment (GitHub Pages)
 
-Models are defined in `models/{model}/model.json`. Very welcome to adjust the existing schema's or add a new one.
+Every push to `main` is built and published automatically by
+[`.github/workflows/main.yml`](.github/workflows/main.yml):
 
-## Vuetify JSON Schema Form
+1. Node 20 installs the dependencies from `yarn.lock` and runs `yarn build`.
+2. The `dist/` folder is pushed to the `gh-pages` branch.
+3. GitHub Pages serves that branch at <https://grs-wur.github.io/meta-edit/>.
 
-The library [vjsf](https://koumoul-dev.github.io/vuetify-jsonschema-form/latest/examples#basic) uses a json-schema definition to render a form. Some special fields ('x-display: 'hidden') are added to the schema file to enrich vizualisation. 
+Pull requests are built (so a broken build shows up before merging) but not deployed.
+Changes that only touch Markdown or `docs/` don't trigger a build. You can also rerun the
+workflow by hand from the **Actions** tab (*GH Pages deploy* → *Run workflow*).
 
-MCF introduces contacts and distributions as key-value pairs. This pattern is not supported by vsjf. For this reason contacts and distributions are converted to array at loading time and back to object when saving.
+Repository settings this relies on:
 
-## License 
+- **Settings → Pages → Build and deployment**: Source *Deploy from a branch*, branch `gh-pages`, folder `/ (root)`.
+- **Settings → Actions → General → Workflow permissions**: the workflow asks for `contents: write` itself;
+  if your organisation restricts this, allow *Read and write permissions*.
 
-MIT
+If the site is moved to another repository name, update `publicPath` in
+[`vue.config.js`](vue.config.js) to `/<new-repo-name>/`, otherwise the page loads blank.
+
+## Changing the form
+
+The form is generated from a JSON Schema by
+[vjsf](https://koumoul-dev.github.io/vuetify-jsonschema-form/latest/) (v2). To add,
+remove or reword a field you normally only edit two files:
+
+| File | What it controls |
+| --- | --- |
+| [`src/models/mcf/model.json`](src/models/mcf/model.json) | The fields: `title` is the label, `description` the help text, `enum` turns a field into a dropdown, `required` marks mandatory fields. `"x-display": "textarea"` gives a multi-line box; `"x-display": "hidden"` hides a field. |
+| [`src/models/mcf/template.json`](src/models/mcf/template.json) | The values a new record starts with (File → New). `$today$` is replaced with today's date. |
+
+Each top-level property in `model.json` is one step in the form. Keep field names
+identical to the [MCF reference](https://geopython.github.io/pygeometa/reference/mcf/),
+because the saved file uses them as-is.
+
+### How records are converted
+
+MCF stores contacts, distributions and keyword groups as key-value maps
+(`contact: {owner: {...}}`); vjsf can only edit lists. The conversion lives in
+[`src/scripts/helpers.js`](src/scripts/helpers.js):
+
+- `mcfToForm()` runs when a file is opened or imported. It turns those maps into
+  lists (`contact.contacts`, `distribution.distributions`, `identification.keywords`),
+  picks the metadata language out of multilingual values such as
+  `description: {en: ...}`, and upgrades MCF 1.0 fields (`datestamp`, a plain-string `license`).
+- `formToMcf()` runs on Save and Export and does the reverse: contacts are keyed by
+  their role (a second contact with the same role becomes `owner_2`), distributions by
+  `i0`, `i1`, ..., keyword groups by their keyword type; the distribution description
+  is written as `{<metadata language>: text}`; sections are written in a fixed order.
+
+If you add a new field that is a key-value map or multilingual in MCF, extend these two functions.
+
+### Other metadata models
+
+`src/models/` also contains schemas for
+[OGC API - Records](https://ogcapi.ogc.org/records/) and
+[Data Package](https://specs.frictionlessdata.io/data-package/). Switch with the
+`vocab` constant at the top of [`src/App.vue`](src/App.vue). These models have not
+been updated alongside MCF, and Save/Export assume MCF.
+
+## Project layout
+
+```
+public/              static files; index.html, logos, codelists
+src/App.vue          the form and Save/Export
+src/components/      MainMenu.vue (File menu, import dialogs), FileReader.vue
+src/models/          JSON Schema + template per metadata model
+src/scripts/         helpers.js (MCF <-> form conversion)
+docs/form-guide.md   guide for people filling in the form
+```
+
+## Known limitations
+
+- The app uses Vue 2 and Vuetify 2, which no longer receive updates. Moving to Vue 3
+  means switching to vjsf v3 and rewriting `App.vue` and `MainMenu.vue`.
+- Import and Export depend on the public pygeoapi demo server; if it is down or changes,
+  those menu items fail. Opening and saving MCF files always works.
+
+## License
+
+[MIT](LICENSE.md)
