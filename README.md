@@ -79,7 +79,7 @@ remove or reword a field you normally only edit two files:
 | --- | --- |
 | [`src/models/mcf/model.json`](src/models/mcf/model.json) | The fields: `title` is the label, `description` the help text, `enum` turns a field into a dropdown, `required` marks mandatory fields. `"x-display": "textarea"` gives a multi-line box; `"x-display": "hidden"` hides a field. |
 | [`src/models/mcf/template.json`](src/models/mcf/template.json) | The values a new record starts with (File → New). `$today$` is replaced with today's date. |
-| [`public/help.html`](public/help.html) | The help page. Update it when you add, remove or rename a field. |
+| [`public/help.html`](public/help.html) | The help page. Update it when you add, remove or rename a field, then regenerate the PDF version (`public/meta-edit-help.pdf`) with `python tools/make-help-pdf.py` (needs `pip install playwright` and `playwright install chromium`). |
 
 Each top-level property in `model.json` is one step in the form. Keep field names
 identical to the [MCF reference](https://geopython.github.io/pygeometa/reference/mcf/),
@@ -119,6 +119,7 @@ src/components/      MainMenu.vue (File menu, import dialogs), FileReader.vue
 src/models/          JSON Schema + template per metadata model
 src/scripts/         helpers.js (MCF <-> form conversion)
 public/help.html     help page for people filling in the form (linked from the Help button)
+public/meta-edit-help.pdf  PDF version of the help page (tools/make-help-pdf.py)
 ```
 
 ## Known limitations
