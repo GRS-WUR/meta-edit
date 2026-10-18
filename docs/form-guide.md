@@ -64,6 +64,7 @@ Examples in *italics* are illustrative only.
 | License | Name and link of the license. Defaults to CC BY 4.0. | `CC BY 4.0`, `https://creativecommons.org/licenses/by/4.0` |
 | Rights | Optional rights or copyright statement. | |
 | Dataset URL | Optional landing page of the dataset. | |
+| Browse graphic | Optional link to a thumbnail image that previews the dataset. | |
 | Status | `completed` for finished datasets. | `completed` |
 | Maintenance frequency | How often the data change; `asNeeded` for most research data. | `asNeeded` |
 

@@ -356,6 +356,11 @@
                     "title": "Dataset URL",
                     "description": "optional - landing page of the dataset"
                 },
+                "browsegraphic": {
+                    "type": "string",
+                    "title": "Browse graphic",
+                    "description": "optional - link to a thumbnail image that previews the dataset (e.g., a quicklook PNG or JPG)"
+                },
                 "status": {
                     "type": "string",
                     "title": "Status",
