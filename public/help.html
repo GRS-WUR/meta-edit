@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>meta-edit help</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f5f7fa;
+    --text: #1d232b;
+    --muted: #5b6573;
+    --line: #dde3ea;
+    --accent: #1976d2;
+    --accent-soft: #e3effb;
+    --req: #b3261e;
+    --req-soft: #fbe9e7;
+    --code: #eef1f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14181d;
+      --surface: #1c2229;
+      --text: #e6e9ed;
+      --muted: #9aa5b1;
+      --line: #2e3640;
+      --accent: #64a8f0;
+      --accent-soft: #1d3247;
+      --req: #f2b8b5;
+      --req-soft: #3b1f1d;
+      --code: #232a33;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  a { color: var(--accent); }
+  code {
+    background: var(--code);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    overflow-wrap: anywhere;
+  }
+  header {
+    border-bottom: 1px solid var(--line);
+    padding: 14px 16px;
+  }
+  .bar {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .bar img { height: 40px; }
+  .back {
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  @media (prefers-color-scheme: dark) { .back { color: #0b1724; } }
+  .layout {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 16px 64px;
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 40px;
+  }
+  nav.toc {
+    position: sticky;
+    top: 16px;
+    align-self: start;
+    font-size: 0.92em;
+  }
+  nav.toc p { margin: 0 0 6px; font-weight: 700; color: var(--muted); text-transform: uppercase; font-size: 0.8em; letter-spacing: 0.04em; }
+  nav.toc ol { list-style: none; margin: 0; padding: 0; }
+  nav.toc li a {
+    display: block;
+    padding: 4px 8px;
+    border-left: 2px solid var(--line);
+    color: var(--text);
+    text-decoration: none;
+  }
+  nav.toc li a:hover { border-left-color: var(--accent); color: var(--accent); }
+  nav.toc li.sub a { padding-left: 20px; color: var(--muted); }
+  main { min-width: 0; }
+  h1 { font-size: 2em; line-height: 1.2; margin: 0 0 8px; }
+  h2 { font-size: 1.45em; margin: 48px 0 8px; padding-top: 8px; border-top: 1px solid var(--line); }
+  h3 { font-size: 1.15em; margin: 32px 0 4px; }
+  .lead { font-size: 1.1em; color: var(--muted); margin-top: 0; }
+  .note {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 16px 0;
+  }
+  .steps { counter-reset: s; list-style: none; padding: 0; }
+  .steps li {
+    counter-increment: s;
+    position: relative;
+    padding: 0 0 12px 44px;
+  }
+  .steps li::before {
+    content: counter(s);
+    position: absolute; left: 0; top: 0;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--accent); color: var(--bg);
+    display: grid; place-items: center; font-weight: 700; font-size: 0.9em;
+  }
+  .step-intro { color: var(--muted); margin: 0 0 12px; }
+  .field {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 10px 0;
+    background: var(--surface);
+  }
+  .field h4 { margin: 0 0 4px; font-size: 1em; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .field p { margin: 4px 0; }
+  .tag {
+    font-size: 0.72em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+    padding: 2px 8px; border-radius: 999px;
+  }
+  .tag.req { background: var(--req-soft); color: var(--req); }
+  .tag.def { background: var(--accent-soft); color: var(--accent); }
+  .eg { color: var(--muted); font-size: 0.94em; }
+  .eg b { color: var(--text); font-weight: 600; }
+  dl.faq dt { font-weight: 700; margin-top: 16px; }
+  dl.faq dd { margin: 4px 0 0; }
+  footer { color: var(--muted); font-size: 0.9em; margin-top: 56px; }
+  @media (max-width: 820px) {
+    .layout { grid-template-columns: 1fr; gap: 0; }
+    nav.toc { position: static; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+    nav.toc li.sub { display: none; }
+    h1 { font-size: 1.6em; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <a href="./"><img src="img/logo-color.png" alt="meta-edit"></a>
+    <a class="back" href="./">&larr; Back to the form</a>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="toc" aria-label="Contents">
+    <p>Contents</p>
+    <ol>
+      <li><a href="#start">Getting started</a></li>
+      <li><a href="#using">Using the form</a></li>
+      <li><a href="#fields">The fields, step by step</a></li>
+      <li class="sub"><a href="#metadata">Metadata</a></li>
+      <li class="sub"><a href="#spatial">Spatial information</a></li>
+      <li class="sub"><a href="#identification">Identification</a></li>
+      <li class="sub"><a href="#content">Content information</a></li>
+      <li class="sub"><a href="#distribution">Distribution</a></li>
+      <li class="sub"><a href="#contact">Contact information</a></li>
+      <li class="sub"><a href="#acquisition">Acquisition</a></li>
+      <li class="sub"><a href="#quality">Data quality</a></li>
+      <li><a href="#import">Importing</a></li>
+      <li><a href="#export">Exporting</a></li>
+      <li><a href="#share">Sharing a record</a></li>
+      <li><a href="#faq">Common questions</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <h1>How to fill in the metadata form</h1>
+    <p class="lead">This form describes a dataset so others can find it, understand it and reuse it. The result is a small text file (a <em>Metadata Control File</em>, <code>.yml</code>) that you keep next to your data.</p>
+
+    <div class="note">
+      <strong>Nothing is saved automatically.</strong> Your entries live only in this browser tab until you click <strong>Save</strong>. Save often, and always before closing the tab.
+    </div>
+
+    <h2 id="start">Getting started</h2>
+    <ol class="steps">
+      <li><strong>Start a record.</strong> The form opens with an empty record and GRS defaults already filled in. To continue an earlier record, use <strong>File &rarr; Open</strong> and choose its <code>.yml</code> file.</li>
+      <li><strong>Give it an identifier</strong> in the first step, <em>Metadata</em>. This becomes the file name.</li>
+      <li><strong>Work through the steps</strong> from top to bottom. At minimum, fill in the fields marked <span class="tag req">Required</span> in this guide.</li>
+      <li><strong>Click Save.</strong> Your browser downloads <code>&lt;identifier&gt;.yml</code>.</li>
+      <li><strong>Store the file with your data</strong>, for example in the same project folder, repository or archive deposit.</li>
+    </ol>
+
+    <h2 id="using">Using the form</h2>
+    <ul>
+      <li><strong>Steps:</strong> the form is divided into steps. Click a step's title to open it. You can move between steps in any order.</li>
+      <li><strong>Help text:</strong> each field has a short explanation in the form itself. This page gives more detail and examples.</li>
+      <li><strong>Lists:</strong> some sections hold several entries (contacts, keyword groups, distributions, platforms, attributes). Use the <strong>+</strong> button to add an entry and the bin icon to remove one.</li>
+      <li><strong>Dropdowns:</strong> fields with a fixed set of options show a dropdown. This page explains which option to pick.</li>
+      <li><strong>Dates:</strong> click a date field to pick from a calendar. Dates are saved as <code>YYYY-MM-DD</code>.</li>
+      <li><strong>Empty fields</strong> are fine. They are still written to the file, so they can be filled in later.</li>
+      <li><strong>File &rarr; New</strong> clears the form and starts again from the defaults. Save first if you want to keep what you entered.</li>
+    </ul>
+
+    <h2 id="fields">The fields, step by step</h2>
+    <p>Examples come from a real record: UAV measurements of sun-induced chlorophyll fluorescence over potato and sugar beet fields, published on 4TU.ResearchData. Fields marked <span class="tag def">Pre-filled</span> already have a sensible default for GRS datasets; check it, and change it only if needed.</p>
+
+    <h3 id="metadata">1. Metadata</h3>
+    <p class="step-intro">Information about this metadata record itself, not about the data.</p>
+
+    <div class="field">
+      <h4>Identifier <span class="tag req">Required</span></h4>
+      <p>A short, unique name for the record. It becomes the file name, so use letters, numbers and hyphens, without spaces. A project name plus data type works well. Students: use the ID given by the data steward.</p>
+      <p class="eg">Example: <b><code>4TU-UAV-SIF-test</code></b></p>
+    </div>
+    <div class="field">
+      <h4>Language <span class="tag def">Pre-filled</span></h4>
+      <p>Two-letter code of the language you write this record in.</p>
+      <p class="eg">Example: <b><code>en</code></b></p>
+    </div>
+    <div class="field">
+      <h4>Alternate language</h4>
+      <p>Only if you also describe the dataset in a second language, e.g. <code>nl</code>. Otherwise leave empty.</p>
+    </div>
+    <div class="field">
+      <h4>Character set <span class="tag def">Pre-filled</span></h4>
+      <p>Leave as <code>utf8</code>.</p>
+    </div>
+    <div class="field">
+      <h4>Parent identifier</h4>
+      <p>The larger record or publication this dataset belongs to, such as the DOI of the published dataset or the project's record. Students: your supervisor's last name.</p>
+      <p class="eg">Example: <b><code>DOI:10.4121/20348382.v1</code></b></p>
+    </div>
+    <div class="field">
+      <h4>Hierarchy level <span class="tag req">Required</span> <span class="tag def">Pre-filled</span></h4>
+      <p>What the record describes. Almost always <code>dataset</code>. Use <code>series</code> for a collection of related datasets, <code>software</code> or <code>model</code> for code.</p>
+    </div>
+    <div class="field">
+      <h4>Metadata dates</h4>
+      <p><strong>Creation</strong> is the date you made this record and is filled in with today's date for a new record. Set <strong>Revision</strong> when you update the record later.</p>
+    </div>
+    <div class="field">
+      <h4>Dataset URI</h4>
+      <p>A persistent web address for the dataset, if it has one. Often left empty.</p>
+    </div>
+
+    <h3 id="spatial">2. Spatial information</h3>
+    <p class="step-intro">How the data represent geographic space.</p>
+    <div class="field">
+      <h4>Data type <span class="tag def">Pre-filled</span></h4>
+      <p><code>grid</code> for rasters and imagery (UAV, satellite), <code>vector</code> for points, lines or polygons, <code>textTable</code> for tables with coordinates.</p>
+      <p class="eg">Example: <b><code>grid</code></b></p>
+    </div>
+    <div class="field">
+      <h4>Geometry type <span class="tag def">Pre-filled</span></h4>
+      <p>For imagery choose <code>surface</code>. For vector data choose the shape used: <code>point</code>, <code>curve</code> (lines) or <code>surface</code> (polygons).</p>
+    </div>
+
+    <h3 id="identification">3. Identification</h3>
+    <p class="step-intro">What the dataset is, when it was made, where it covers, and how it may be used. This is the most important step.</p>
+    <div class="field">
+      <h4>Dataset language <span class="tag def">Pre-filled</span></h4>
+      <p>Language of any text inside the data (labels, column names). Two-letter code.</p>
+    </div>
+    <div class="field">
+      <h4>Title <span class="tag req">Required</span></h4>
+      <p>The name of the dataset. Make it descriptive enough to recognise in a search result: what, where, and, if relevant, how. For thesis data, the thesis title works.</p>
+      <p class="eg">Example: <b>Diurnal UAV-based sun-induced chlorophyll fluorescence over potato and sugar beet fields</b></p>
+    </div>
+    <div class="field">
+      <h4>Abstract</h4>
+      <p>A short paragraph on what was measured or produced, where, when, and with which instruments or methods. Someone should be able to decide from this alone whether the data are useful to them.</p>
+      <p class="eg">Example: UAV-based sun-induced chlorophyll fluorescence was acquired over potato and sugar beet fields during clear sky conditions on August 2, 2018. Four flights following a diurnal cycle were carried out&hellip;</p>
+    </div>
+    <div class="field">
+      <h4>Edition</h4>
+      <p>A version number, if the dataset has versions. Otherwise leave empty.</p>
+    </div>
+    <div class="field">
+      <h4>Dataset dates</h4>
+      <p>Fill in at least one. <strong>Creation</strong>: when the data were collected or produced. <strong>Publication</strong>: when they were published, e.g. in a repository. <strong>Revision</strong>: when they were last changed.</p>
+      <p class="eg">Example: creation <b><code>2018-08-02</code></b>, publication <b><code>2022-08-23</code></b></p>
+    </div>
+    <div class="field">
+      <h4>Keywords</h4>
+      <p>Words that help people find the dataset. Click <strong>+</strong> to add a keyword group, then type each keyword and press <strong>Enter</strong>. Choose the <strong>keyword type</strong>: <code>theme</code> for subjects (most keywords), <code>place</code> for locations, <code>discipline</code> for research fields. If the keywords come from a controlled list, such as a thesaurus, enter its name and link under <strong>Vocabulary</strong>.</p>
+      <p class="eg">Illustrative: a <code>theme</code> group with <b>chlorophyll fluorescence, UAV, potato, sugar beet</b> and a <code>place</code> group with <b>Netherlands</b></p>
+    </div>
+    <div class="field">
+      <h4>Topic categories</h4>
+      <p>One or more broad, standard categories used by catalogues. For GRS data, common choices are <code>imageryBaseMapsEarthCover</code>, <code>farming</code>, <code>environment</code>, <code>biota</code> and <code>elevation</code>.</p>
+    </div>
+    <div class="field">
+      <h4>Extents &rarr; Spatial <span class="tag def">Pre-filled</span></h4>
+      <p>The area covered, as a <strong>bounding box</strong> of four numbers in this order: minimum longitude, minimum latitude, maximum longitude, maximum latitude. Type each number and press <strong>Tab</strong> to move to the next. Keep <strong>CRS</strong> as <code>4326</code> (longitude/latitude in degrees, WGS 84) unless you know otherwise. The default covers the whole of the Netherlands; narrow it to your study area if you can.</p>
+      <p class="eg">Default: <b><code>3.356, 50.75, 7.218, 53.563</code></b> &middot; <a href="https://boundingbox.klokantech.com/" target="_blank" rel="noopener">Find a bounding box on a map</a> (choose the CSV output)</p>
+    </div>
+    <div class="field">
+      <h4>Extents &rarr; Temporal</h4>
+      <p>The period the data cover: <strong>Begin</strong> and <strong>End</strong> dates. For a single day, use the same date for both. <strong>Resolution</strong> is optional: the time step of the data as an ISO 8601 duration, such as <code>P1D</code> (daily) or <code>PT1H</code> (hourly).</p>
+    </div>
+    <div class="field">
+      <h4>Access constraints <span class="tag def">Pre-filled</span></h4>
+      <p>Choose <code>license</code> when the data are shared under a license (the usual case). Choose <code>otherRestrictions</code> if there are no special constraints, or <code>restricted</code> if access is limited.</p>
+    </div>
+    <div class="field">
+      <h4>License <span class="tag def">Pre-filled</span></h4>
+      <p>The license name and a link to its text. The default, CC BY 4.0, lets anyone reuse the data with attribution. Change it if your data were published under a different license.</p>
+      <p class="eg">Example: <b>CC BY 4.0</b>, <b><code>https://creativecommons.org/licenses/by/4.0</code></b></p>
+    </div>
+    <div class="field">
+      <h4>Rights</h4>
+      <p>An optional rights statement, such as the copyright holder and year.</p>
+    </div>
+    <div class="field">
+      <h4>Dataset URL</h4>
+      <p>The landing page of the dataset, if it has one, e.g. its repository page.</p>
+    </div>
+    <div class="field">
+      <h4>Browse graphic</h4>
+      <p>A link to a small preview image of the data, such as a quicklook map or a thumbnail of an orthomosaic. Use a web link to a PNG or JPG.</p>
+    </div>
+    <div class="field">
+      <h4>Status <span class="tag def">Pre-filled</span></h4>
+      <p><code>completed</code> for finished datasets, <code>onGoing</code> if data are still being added, <code>planned</code> if they don't exist yet.</p>
+    </div>
+    <div class="field">
+      <h4>Maintenance frequency <span class="tag def">Pre-filled</span></h4>
+      <p>How often the data will be updated. <code>asNeeded</code> suits most research data; use <code>notPlanned</code> if they will never change.</p>
+    </div>
+
+    <h3 id="content">4. Content information</h3>
+    <p class="step-intro">What is inside the data: the variables and, for imagery, the spectral bands.</p>
+    <div class="field">
+      <h4>Content type <span class="tag def">Pre-filled</span></h4>
+      <p><code>image</code> for imagery (UAV, satellite, camera), <code>coverage</code> for other gridded data such as model output, <code>feature_catalogue</code> for vector data.</p>
+    </div>
+    <div class="field">
+      <h4>Processing level</h4>
+      <p>For imagery, the processing level if one applies, e.g. <code>L1</code> for radiometrically corrected or <code>L2</code> for reflectance products.</p>
+    </div>
+    <div class="field">
+      <h4>Attributes</h4>
+      <p>One entry per variable in the data (a column, band or layer). <strong>Name</strong>: exactly as it appears in the data. <strong>Title</strong>: a readable name. <strong>Data type</strong>: usually <code>number</code> for measurements. <strong>Units</strong>: SI units. <strong>URL</strong>: optional link to a definition.</p>
+      <p class="eg">Illustrative: name <b><code>SIF</code></b>, title <b>Sun-induced fluorescence</b>, type <b><code>number</code></b>, units <b><code>mW m-2 sr-1 nm-1</code></b></p>
+    </div>
+    <div class="field">
+      <h4>Dimensions</h4>
+      <p>For imagery: one entry per spectral band, with its name, units and lower and upper wavelength. Leave empty for non-imagery data.</p>
+      <p class="eg">Illustrative: <b><code>green</code></b>, <b><code>nm</code></b>, min <b>530</b>, max <b>570</b></p>
+    </div>
+
+    <h3 id="distribution">5. Distribution information</h3>
+    <p class="step-intro">Where the data can be found or downloaded. Add one entry per location.</p>
+    <div class="field">
+      <h4>URL <span class="tag req">Required</span></h4>
+      <p>The web address of the data or their landing page. A DOI link also works.</p>
+      <p class="eg">Example: <b><code>https://data.4tu.nl/datasets/25a3055f-4d04-4791-9591-83bbca27a13c/1</code></b></p>
+    </div>
+    <div class="field">
+      <h4>Type <span class="tag def">Pre-filled</span></h4>
+      <p><code>WWW:LINK</code> for a web page or repository. The other options are for web services, such as <code>OGC:WMS</code> for a map service.</p>
+    </div>
+    <div class="field">
+      <h4>Name</h4>
+      <p>Name of the repository or service.</p>
+      <p class="eg">Example: <b>4TU.ResearchData</b></p>
+    </div>
+    <div class="field">
+      <h4>Description</h4>
+      <p>A sentence about what is found at this location, e.g. "Full dataset with raw and processed images". It is saved in the record's language.</p>
+    </div>
+    <div class="field">
+      <h4>Function <span class="tag def">Pre-filled</span></h4>
+      <p><code>download</code> if the data can be downloaded there; <code>information</code> for a page that only describes them; <code>order</code> if access must be requested.</p>
+    </div>
+
+    <h3 id="contact">6. Contact information</h3>
+    <p class="step-intro">Who is responsible for the data. Add one entry per person or role.</p>
+    <div class="field">
+      <h4>Role <span class="tag req">Required</span> <span class="tag def">Pre-filled</span></h4>
+      <p>What this contact does. <code>owner</code>: who owns the data (usually the PI or supervisor). <code>pointOfContact</code>: whom to ask about the data. <code>originator</code> or <code>author</code>: who collected or created the data. <code>principalInvestigator</code>: the project lead. Use each role once; if two people share a role, the second is saved as e.g. <code>owner_2</code>.</p>
+    </div>
+    <div class="field">
+      <h4>Organization <span class="tag req">Required</span> <span class="tag def">Pre-filled</span></h4>
+      <p>The responsible organisation; <code>GRS</code> unless otherwise specified.</p>
+    </div>
+    <div class="field">
+      <h4>Name and position</h4>
+      <p>The responsible person and their position, e.g. <em>Associate Professor</em>.</p>
+      <p class="eg">Example: <b>Lammert Kooistra</b></p>
+    </div>
+    <div class="field">
+      <h4>Email <span class="tag req">Required</span></h4>
+      <p>A contact email address. Prefer an address that will remain valid; a student's university address expires after graduation, so add the supervisor as a second contact.</p>
+    </div>
+    <div class="field">
+      <h4>Other contact details</h4>
+      <p>URL, phone, fax, address, city, administrative area (province), postal code and country. Fill in what is useful. City and country are pre-filled with Wageningen, Netherlands, and the URL with the GRS website.</p>
+    </div>
+    <div class="field">
+      <h4>Contact instructions</h4>
+      <p>Optional: when or how to get in touch, e.g. "Contact by email".</p>
+    </div>
+
+    <h3 id="acquisition">7. Acquisition</h3>
+    <p class="step-intro">The platforms and instruments used to collect the data. Add one entry per platform; each platform can have several instruments.</p>
+    <div class="field">
+      <h4>Platform and description</h4>
+      <p>The name of the platform (drone, aircraft, satellite, field station) and what kind it is.</p>
+      <p class="eg">Example: <b>Dji Mavic2</b>, <b>Quadcopter</b></p>
+    </div>
+    <div class="field">
+      <h4>Instruments</h4>
+      <p>The sensors carried by the platform: name and type.</p>
+      <p class="eg">Example: <b>Parrot Sequoia</b>, <b>MSP sensor</b> (multispectral)</p>
+    </div>
+    <p>For data not collected with an instrument, such as model output, leave this step empty.</p>
+
+    <h3 id="quality">8. Data quality</h3>
+    <p class="step-intro">How the data were produced, so others can judge whether to trust and reuse them.</p>
+    <div class="field">
+      <h4>Scope &rarr; Level <span class="tag def">Pre-filled</span></h4>
+      <p>What the quality statement applies to. Leave as <code>dataset</code>.</p>
+    </div>
+    <div class="field">
+      <h4>Lineage statement</h4>
+      <p>A few sentences on how the dataset was made: source data, processing steps, software and versions, and any calibration or quality checks. This is one of the most useful fields for anyone reusing your data.</p>
+      <p class="eg">Illustrative: <b>Images were calibrated with a reflectance panel, mosaicked in photogrammetry software (name and version), and resampled to 5 cm resolution.</b></p>
+    </div>
+
+    <h2 id="import">Importing instead of typing</h2>
+    <p>If the dataset is already described elsewhere, you can pre-fill the form:</p>
+    <ul>
+      <li><strong>File &rarr; Import, then DOI:</strong> enter the DOI, e.g. <code>10.4121/20348382.v1</code>. Title, authors, publisher, publication date and keywords are filled in from the DOI registration.</li>
+      <li><strong>File &rarr; Import, then iso19139:</strong> give a link to, or upload, an ISO 19139 XML metadata record.</li>
+      <li><strong>File &rarr; Import from WMS:</strong> enter a web map service address, pick a layer, and its title, description, keywords, extent and contact are filled in.</li>
+    </ul>
+    <p>Imported values are added to what is already in the form; nothing else is cleared. Imports never fill in everything, so check each step afterwards. Importing uses an external conversion service, so it needs an internet connection and may occasionally be unavailable.</p>
+
+    <h2 id="export">Exporting to other formats</h2>
+    <p><strong>File &rarr; Export</strong> converts the record to another standard for repositories and catalogues that require it: <code>iso19139</code> (XML), <code>oarec-record</code> (OGC API - Records), <code>stac-item</code> (STAC) or <code>dcat</code>. Always keep the <code>.yml</code> file from <strong>Save</strong> as your master copy: it is the only format you can open and edit again in this form.</p>
+
+    <h2 id="share">Sharing a record</h2>
+    <p>If your <code>.yml</code> file is online, for example on GitHub (use its <em>Raw</em> link), anyone can open it in the form with a link like this:</p>
+    <p><code>https://grs-wur.github.io/meta-edit/?mcf=&lt;link to the .yml file&gt;</code></p>
+
+    <h2 id="faq">Common questions</h2>
+    <dl class="faq">
+      <dt>I closed the tab. Is my work lost?</dt>
+      <dd>Yes, unless you saved it. The form keeps nothing in the browser. Save regularly; you can always reopen the file with File &rarr; Open.</dd>
+      <dt>The file is called <code>metadata.yml</code> instead of my identifier.</dt>
+      <dd>The Identifier field in the Metadata step was empty when you saved. Fill it in and save again.</dd>
+      <dt>Which fields do I really need?</dt>
+      <dd>The ones marked Required: identifier, hierarchy level, title, at least one contact (role, organisation, email) and the URL of each distribution. A good title, abstract, keywords, extent and lineage make the record much more useful, so fill those in too.</dd>
+      <dt>I opened an older record and some fields look different.</dt>
+      <dd>Records made with an earlier version of the form are converted automatically. For example, the license is split into name and link. Check the fields and save; the new file uses the current format.</dd>
+      <dt>The form looks out of date after an update.</dt>
+      <dd>Your browser may be showing a cached copy. Reload with Ctrl + Shift + R (Cmd + Shift + R on a Mac).</dd>
+      <dt>Import or Export shows an error.</dt>
+      <dd>The conversion service may be temporarily unavailable. Try again later; opening and saving <code>.yml</code> files always works.</dd>
+    </dl>
+
+    <footer>
+      meta-edit &middot; GRS, Wageningen University &amp; Research &middot;
+      <a href="https://github.com/GRS-WUR/meta-edit" target="_blank" rel="noopener">Source and issues on GitHub</a> &middot;
+      <a href="https://geopython.github.io/pygeometa/reference/mcf/" target="_blank" rel="noopener">MCF format reference</a>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

@@ -13,7 +13,7 @@ You fill in the form and save the result as a
 a readable YAML file that sits next to your data and can be converted to ISO 19139,
 OGC API - Records, STAC or DCAT.
 
-- **Filling in the form?** Read the [form guide](docs/form-guide.md).
+- **Filling in the form?** Read the [help page](https://grs-wur.github.io/meta-edit/help.html), also linked from the form's **Help** button.
 - **Maintaining the app?** Read on.
 
 meta-edit is based on [MDME](https://github.com/osgeo/mdme) by Paul van Genuchten.
@@ -79,6 +79,7 @@ remove or reword a field you normally only edit two files:
 | --- | --- |
 | [`src/models/mcf/model.json`](src/models/mcf/model.json) | The fields: `title` is the label, `description` the help text, `enum` turns a field into a dropdown, `required` marks mandatory fields. `"x-display": "textarea"` gives a multi-line box; `"x-display": "hidden"` hides a field. |
 | [`src/models/mcf/template.json`](src/models/mcf/template.json) | The values a new record starts with (File → New). `$today$` is replaced with today's date. |
+| [`public/help.html`](public/help.html) | The help page. Update it when you add, remove or rename a field. |
 
 Each top-level property in `model.json` is one step in the form. Keep field names
 identical to the [MCF reference](https://geopython.github.io/pygeometa/reference/mcf/),
@@ -112,12 +113,12 @@ been updated alongside MCF, and Save/Export assume MCF.
 ## Project layout
 
 ```
-public/              static files; index.html, logos, codelists
+public/              static files; index.html, help.html, logos, codelists
 src/App.vue          the form and Save/Export
 src/components/      MainMenu.vue (File menu, import dialogs), FileReader.vue
 src/models/          JSON Schema + template per metadata model
 src/scripts/         helpers.js (MCF <-> form conversion)
-docs/form-guide.md   guide for people filling in the form
+public/help.html     help page for people filling in the form (linked from the Help button)
 ```
 
 ## Known limitations

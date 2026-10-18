@@ -29,8 +29,8 @@
 
       <v-btn class="me-auto" @click="saveFile">Save</v-btn>
 
-      <a href="https://github.com/GRS-WUR/meta-edit#readme" class="text-decoration-none" target="_blank">
-        <v-btn>Documentation</v-btn></a>
+      <a href="help.html" class="text-decoration-none" target="_blank" title="How to fill in the form">
+        <v-btn>Help</v-btn></a>
     </v-app-bar>
 
     <v-dialog v-model="filedialog" width="auto">
