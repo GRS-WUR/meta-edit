@@ -1,56 +1,132 @@
 {
     "mcf": {
-        "version": "1.0"
+        "version": 2.0
     },
     "metadata": {
-        "hierarchylevel": "dataset",
         "identifier": "",
         "language": "en",
+        "language_alternate": "",
         "charset": "utf8",
         "parentidentifier": "",
-        "datestamp": "$date$"
+        "hierarchylevel": "dataset",
+        "dates": {
+            "creation": "$today$"
+        },
+        "dataseturi": ""
     },
     "spatial": {
+        "datatype": "grid",
+        "geomtype": "surface"
     },
-    "distribution": [
-        {
-            "url": "",
-            "type": "",
-            "name": "",
-            "description": "",
-            "function": ""
-        }
-    ],
-    "contact": [
-        {
-            "organization": "",
-            "url": "",
-            "individualname": "",
-            "positionname": "",
-            "country": "",
-            "email": ""
-        }
-    ],
     "identification": {
-        "identifier": "",
+        "language": "en",
         "title": "",
         "abstract": "",
+        "edition": "",
         "dates": {
             "creation": "",
             "publication": "",
             "revision": ""
         },
-        "edition": "",
-        "extents": {
-                "spatial": [{"bbox":[3,50.5,7.5,54],"crs":4326}],
-                "temporal": [{"begin":"","end":""}]
-            },
-        "modDate": "",
         "keywords": [],
-        "language": "en",
-        "status": "completed",
-        "maintenancefrequency": "irregular",
+        "topiccategory": [],
+        "extents": {
+            "spatial": [
+                {
+                    "bbox": [3.356, 50.75, 7.218, 53.563],
+                    "crs": 4326
+                }
+            ],
+            "temporal": [
+                {
+                    "begin": "",
+                    "end": ""
+                }
+            ]
+        },
         "accessconstraints": "license",
-        "rights": "CC-BY 4.0"
+        "license": {
+            "name": "CC BY 4.0",
+            "url": "https://creativecommons.org/licenses/by/4.0"
+        },
+        "rights": "",
+        "url": "",
+        "browsegraphic": "",
+        "status": "completed",
+        "maintenancefrequency": "asNeeded"
+    },
+    "content_info": {
+        "type": "image",
+        "processing_level": "",
+        "attributes": [
+            {
+                "name": "",
+                "title": "",
+                "type": "string",
+                "url": "",
+                "units": ""
+            }
+        ],
+        "dimensions": [
+            {
+                "name": "",
+                "units": "",
+                "min": 0,
+                "max": 0
+            }
+        ]
+    },
+    "distribution": {
+        "distributions": [
+            {
+                "url": "",
+                "type": "WWW:LINK",
+                "name": "",
+                "description": "",
+                "function": "download"
+            }
+        ]
+    },
+    "contact": {
+        "contacts": [
+            {
+                "role": "owner",
+                "organization": "GRS",
+                "url": "https://www.wur.nl/nl/leerstoelgroepen/laboratorium-voor-geo-informatiekunde-en-remote-sensing",
+                "individualname": "",
+                "positionname": "",
+                "phone": "",
+                "fax": "",
+                "address": "",
+                "city": "Wageningen",
+                "administrativearea": "",
+                "postalcode": "",
+                "country": "Netherlands",
+                "email": "",
+                "contactinstructions": ""
+            }
+        ]
+    },
+    "acquisition": {
+        "platforms": [
+            {
+                "identifier": "",
+                "description": "",
+                "instruments": [
+                    {
+                        "identifier": "",
+                        "type": ""
+                    }
+                ]
+            }
+        ]
+    },
+    "dataquality": {
+        "scope": {
+            "level": "dataset"
+        },
+        "lineage": {
+            "statement": ""
+        }
     }
 }

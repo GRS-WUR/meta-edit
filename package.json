@@ -1,6 +1,6 @@
 {
     "name": "mdme",
-    "description": "A web based UI to edit MCF metadata",
+    "description": "A web based form to create geospatial metadata (MCF) records",
     "keywords": [
         "Metadata",
         "Geo",
@@ -74,5 +74,8 @@
         "> 1%",
         "last 2 versions",
         "not dead"
-    ]
+    ],
+    "engines": {
+        "node": ">=18"
+    }
 }
