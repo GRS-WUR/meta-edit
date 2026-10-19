@@ -147,13 +147,50 @@
     nav.toc li.sub { display: none; }
     h1 { font-size: 1.6em; }
   }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+  .pdf {
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .print-only { display: none; }
+  @media print {
+    :root {
+      --bg: #ffffff; --surface: #f5f7fa; --text: #1d232b; --muted: #5b6573;
+      --line: #dde3ea; --accent: #1976d2; --accent-soft: #e3effb;
+      --req: #b3261e; --req-soft: #fbe9e7; --code: #eef1f5;
+    }
+    @page { size: A4; margin: 16mm 14mm 18mm; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { font-size: 10.5pt; line-height: 1.5; }
+    header { padding: 0 0 8px; }
+    .actions, nav.toc { display: none; }
+    .print-only { display: block; }
+    .layout { display: block; padding: 0; max-width: none; }
+    h1 { font-size: 20pt; }
+    h2 { font-size: 15pt; margin-top: 24px; break-after: avoid; }
+    h2#fields { break-before: page; }
+    h3 { font-size: 12.5pt; margin-top: 18px; break-after: avoid; }
+    .step-intro { break-after: avoid; }
+    .field, .note, dl.faq dt, .steps li { break-inside: avoid; }
+    .field { padding: 8px 12px; margin: 6px 0; }
+    a { text-decoration: none; }
+    footer { margin-top: 24px; }
+  }
 </style>
 </head>
 <body>
 <header>
   <div class="bar">
     <a href="./"><img src="img/logo-color.png" alt="meta-edit"></a>
-    <a class="back" href="./">&larr; Back to the form</a>
+    <div class="actions">
+      <a class="pdf" href="meta-edit-help.pdf" download>Download PDF</a>
+      <a class="back" href="./">&larr; Back to the form</a>
+    </div>
   </div>
 </header>
 
@@ -183,6 +220,7 @@
     <h1>How to fill in the metadata form</h1>
     <p class="lead">This form describes a dataset so others can find it, understand it and reuse it. The result is a small text file (a <em>Metadata Control File</em>, <code>.yml</code>) that you keep next to your data.</p>
 
+    <p class="print-only">Form: <code>https://grs-wur.github.io/meta-edit/</code> &middot; Online version of this guide: <code>https://grs-wur.github.io/meta-edit/help.html</code></p>
     <div class="note">
       <strong>Nothing is saved automatically.</strong> Your entries live only in this browser tab until you click <strong>Save</strong>. Save often, and always before closing the tab.
     </div>
