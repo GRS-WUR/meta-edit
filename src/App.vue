@@ -84,13 +84,15 @@ export default {
       if (mode=='mcf'){
         self.download(stringify(toExp), 'yml');
       } else {
-        this.axios.post("https://demo.pygeoapi.io/master/processes/pygeometa-metadata-generate/execution", {
+        // Sent as text/plain to avoid a CORS preflight: the pygeoapi demo
+        // server does not allow the Content-Type header in preflight responses.
+        this.axios.post("https://demo.pygeoapi.io/master/processes/pygeometa-metadata-generate/execution", JSON.stringify({
           "inputs": {
             "mcf": toExp,
             "schema": mode
           }
-        },{
-          headers: {'Accept': 'application/json'}
+        }),{
+          headers: {'Content-Type': 'text/plain', 'Accept': 'application/json'}
         }).then(function(response){
           //todo: build some check to evaluate if the content is of expected type
 
