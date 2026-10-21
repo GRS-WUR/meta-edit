@@ -193,10 +193,14 @@ export default {
               .get(this.record, { headers: { Accept: "application/xml" } })
               .then(function (response) {
                 try {
-                  self.parseMetadata(
-                    response.data.split("<gmd:MD_Metadata")[1],
-                    self.importschema
-                  );
+                  // drop anything before the root element (e.g. a CSW
+                  // envelope), but keep the root element's opening tag
+                  let xml = response.data;
+                  let start = xml.indexOf("<gmd:MD_Metadata");
+                  if (start > 0) {
+                    xml = xml.substring(start);
+                  }
+                  self.parseMetadata(xml, self.importschema);
                 } catch (e) {
                   console.log(e);
                 }
@@ -218,22 +222,28 @@ export default {
     parseMetadata(str, schema) {
       let self = this;
       //send xml to pygeoapi
+      // The body is sent as text/plain so the browser treats this as a
+      // "simple" CORS request: the pygeoapi demo server's preflight response
+      // does not allow the Content-Type header, so an application/json POST
+      // is blocked before it is sent. pygeoapi still parses the body as JSON.
       this.axios
         .post(
           "https://demo.pygeoapi.io/master/processes/pygeometa-metadata-import/execution",
-          {
+          JSON.stringify({
             inputs: {
               metadata: str,
               schema: schema,
             },
-          },
+          }),
           {
-            headers: { Accept: "application/json" },
+            headers: { "Content-Type": "text/plain", Accept: "application/json" },
           }
         )
         .then(function (response) {
           //todo: build some check to evaluate if the content is of expected type
-          if (response.data.value) {
+          // pygeometa reports import failures as a string value
+          // ("Invalid metadata: ...") with HTTP 200, so only accept objects
+          if (response.data.value && typeof response.data.value === "object") {
             self.$emit("updateModel", self.loadMCF(response.data.value));
             self.importdialog = false;
           } else {
@@ -243,6 +253,9 @@ export default {
             }
             if (response.data.description) {
               err += response.data.description;
+            }
+            if (typeof response.data.value === "string") {
+              err += response.data.value;
             }
             alert(err);
           }
